@@ -1,0 +1,16 @@
+<div class="drill-page">
+  <app-page-header title="Employees on Leave"></app-page-header>
+
+  <app-horizontal-bar-chart
+    title="Top Employees on Leave by Department"
+    [items]="chartItems"
+  ></app-horizontal-bar-chart>
+
+  <app-department-breakdown
+    title="Department Breakdown"
+    [columns]="columns"
+    [rows]="rows"
+    searchPlaceholder="Lorem Ipsum Search Sample"
+    [searchKeys]="['department']"
+  ></app-department-breakdown>
+</div>

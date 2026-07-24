@@ -1,0 +1,18 @@
+<div class="drill-page">
+  <app-page-header title="Tardiness Rate"></app-page-header>
+
+  <app-metric-stats [stats]="stats"></app-metric-stats>
+
+  <app-horizontal-bar-chart
+    title="Top Departments by Tardiness"
+    [items]="chartItems"
+  ></app-horizontal-bar-chart>
+
+  <app-department-breakdown
+    title="Department Breakdown"
+    [columns]="columns"
+    [rows]="rows"
+    searchPlaceholder="Lorem Ipsum Search Sample"
+    [searchKeys]="['department']"
+  ></app-department-breakdown>
+</div>

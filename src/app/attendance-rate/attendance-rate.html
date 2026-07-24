@@ -1,0 +1,18 @@
+<div class="drill-page">
+  <app-page-header title="Attendance Rate"></app-page-header>
+
+  <app-metric-stats [stats]="stats"></app-metric-stats>
+
+  <app-horizontal-bar-chart
+    title="Top Departments by Attendance"
+    [items]="chartItems"
+  ></app-horizontal-bar-chart>
+
+  <app-department-breakdown
+    title="Department Breakdown"
+    [columns]="columns"
+    [rows]="rows"
+    searchPlaceholder="Search"
+    [searchKeys]="['department']"
+  ></app-department-breakdown>
+</div>

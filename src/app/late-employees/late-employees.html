@@ -1,0 +1,211 @@
+<div class="late-page">
+  <nav class="late-breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/" class="late-breadcrumbs__link">Dashboard</a>
+    <span class="late-breadcrumbs__sep" aria-hidden="true">&gt;</span>
+    <span class="late-breadcrumbs__current">Late Employees</span>
+  </nav>
+
+  <h1 class="late-page__title">Late Employees</h1>
+
+  <!-- Late Trend chart -->
+  <section class="late-card late-card--chart">
+    <h2 class="late-card__title">Late Trend Employees</h2>
+    <div class="late-trend">
+      <svg class="late-trend__svg" viewBox="0 0 720 220" role="img" aria-label="Late employees trend by weekday">
+        <defs>
+          <linearGradient id="lateTrendFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        <ng-container *ngFor="let y of trendYTicks; trackBy: trackByTick">
+          <line
+            [attr.x1]="40"
+            [attr.x2]="704"
+            [attr.y1]="16 + 172 * (1 - y / 100)"
+            [attr.y2]="16 + 172 * (1 - y / 100)"
+            class="late-trend__grid"
+          />
+          <text
+            [attr.x]="32"
+            [attr.y]="16 + 172 * (1 - y / 100) + 4"
+            class="late-trend__ylabel"
+            text-anchor="end"
+          >{{ y }}</text>
+        </ng-container>
+
+        <path [attr.d]="chartPath.area" fill="url(#lateTrendFill)" class="late-trend__area"/>
+        <path [attr.d]="chartPath.line" fill="none" class="late-trend__line"/>
+        <circle
+          *ngFor="let dot of chartPath.dots; trackBy: trackByIndex"
+          [attr.cx]="dot.x"
+          [attr.cy]="dot.y"
+          r="4.5"
+          class="late-trend__dot"
+        />
+        <text
+          *ngFor="let p of trendPoints; trackBy: trackByLabel; let i = index"
+          [attr.x]="chartPath.dots[i].x"
+          [attr.y]="210"
+          class="late-trend__xlabel"
+          text-anchor="middle"
+        >{{ p.label }}</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Late Employees table -->
+  <section class="late-card late-card--table">
+    <h2 class="late-card__title">Late Employees</h2>
+
+    <div class="late-toolbar">
+      <div class="late-search">
+        <input
+          type="search"
+          placeholder="Search"
+          [value]="searchQuery"
+          (input)="onSearch($event)"
+          aria-label="Search late employees"
+        />
+        <button type="button" class="late-search__btn" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" stroke="white" stroke-width="1.75"/>
+            <path d="M16 16l4 4" stroke="white" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="late-toolbar__actions">
+        <button type="button" class="late-action-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+          </svg>
+          Filter
+        </button>
+        <button type="button" class="late-action-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 7l4-4 4 4M8 17l4 4 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Sort
+        </button>
+      </div>
+    </div>
+
+    <div class="late-table-wrap">
+      <table class="late-table">
+        <thead>
+          <tr>
+            <th>
+              <button type="button" class="late-th-btn" (click)="setSort('name')">
+                Employee Name
+                <span class="late-sort" aria-hidden="true">⇅</span>
+              </button>
+            </th>
+            <th>
+              <button type="button" class="late-th-btn" (click)="setSort('department')">
+                Department
+                <span class="late-sort" aria-hidden="true">⇅</span>
+              </button>
+            </th>
+            <th>
+              <button type="button" class="late-th-btn" (click)="setSort('scheduledIn')">
+                Scheduled In
+                <span class="late-sort" aria-hidden="true">⇅</span>
+              </button>
+            </th>
+            <th>
+              <button type="button" class="late-th-btn" (click)="setSort('actualIn')">
+                Actual In
+                <span class="late-sort" aria-hidden="true">⇅</span>
+              </button>
+            </th>
+            <th>
+              <button type="button" class="late-th-btn" (click)="setSort('late')">
+                Late
+                <span class="late-sort" aria-hidden="true">⇅</span>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of pagedEmployees; trackBy: trackByEmployeeId">
+            <td>
+              <div class="late-emp">
+                <span class="late-emp__avatar" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="9" r="3.5" fill="#8B95A5"/>
+                    <path d="M5 19.5c1.5-3.5 4-5 7-5s5.5 1.5 7 5" stroke="#8B95A5" stroke-width="1.75" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span class="late-emp__name">{{ row.name }}</span>
+              </div>
+            </td>
+            <td>{{ row.department }}</td>
+            <td>{{ row.scheduledIn }}</td>
+            <td>{{ row.actualIn }}</td>
+            <td>{{ row.late }}</td>
+          </tr>
+          <tr *ngIf="pagedEmployees.length === 0">
+            <td colspan="5" class="late-table__empty">No late employees match your search.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="late-footer">
+      <div class="late-pager" role="navigation" aria-label="Pagination">
+        <button
+          type="button"
+          class="late-pager__btn"
+          [disabled]="currentPage <= 1"
+          (click)="goPage(currentPage - 1)"
+          aria-label="Previous page"
+        >
+          ‹
+        </button>
+        <ng-container *ngFor="let p of pageButtons; trackBy: trackByIndex">
+          <span class="late-pager__ellipsis" *ngIf="isEllipsis(p)">…</span>
+          <button
+            type="button"
+            class="late-pager__btn"
+            *ngIf="!isEllipsis(p)"
+            [class.is-active]="currentPage === p"
+            (click)="goPage(p)"
+          >
+            {{ p }}
+          </button>
+        </ng-container>
+        <button
+          type="button"
+          class="late-pager__btn"
+          [disabled]="currentPage >= totalPages"
+          (click)="goPage(currentPage + 1)"
+          aria-label="Next page"
+        >
+          ›
+        </button>
+      </div>
+
+      <div class="late-footer__controls">
+        <label class="late-footer__label">
+          Go to Page
+          <select [value]="goToPage" (change)="onGoToPageChange($event)" aria-label="Go to page">
+            <option *ngFor="let n of pageNumberOptions; trackBy: trackByPageNumber" [value]="n">{{ n }}</option>
+          </select>
+        </label>
+
+        <label class="late-footer__label">
+          Show Rows
+          <select [value]="pageSize" (change)="onPageSizeChange($event)" aria-label="Show rows">
+            <option [value]="10">10</option>
+            <option [value]="20">20</option>
+            <option [value]="50">50</option>
+          </select>
+        </label>
+
+        <span class="late-footer__range">{{ rangeLabel }}</span>
+      </div>
+    </footer>
+  </section>
+</div>
